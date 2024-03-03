@@ -1,5 +1,6 @@
 import cv2
 import os
+import numpy as np
 from PaddleOCR import recognize_text
 from DataToExcel import data_to_excel
 
@@ -18,10 +19,40 @@ gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
 # 閾值處理
 _, thresh = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
-cv2.imshow('tresh',thresh)
-cv2.waitKey(0)
+
+inverted_image = cv2.bitwise_not(thresh)
+
+iter = 3
+hor = np.array([[1,1,1,1,1,1]])
+vertical_lines_eroded_image = cv2.erode(inverted_image, hor, iterations=iter)
+vertical_lines_eroded_image = cv2.dilate(vertical_lines_eroded_image, hor, iterations=iter)
+
+ver = np.array([[1],
+               [1],
+               [1],
+               [1],
+               [1],
+               [1],
+               [1]])
+horizontal_lines_eroded_image = cv2.erode(inverted_image, ver, iterations=iter)
+horizontal_lines_eroded_image = cv2.dilate(horizontal_lines_eroded_image, ver, iterations=iter)
+
+combined_image = cv2.add(vertical_lines_eroded_image, horizontal_lines_eroded_image)
+
+cv2.imshow('vertical_lines_eroded_image',vertical_lines_eroded_image)
+cv2.imshow('horizontal_lines_eroded_image',horizontal_lines_eroded_image)
+cv2.imshow('combined_image',combined_image)
+
+
+
 # 找到輪廓
-contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+contours, _ = cv2.findContours(combined_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+cv2.drawContours(image, contours, -1, (0, 255, 0), 3)
+
+cv2.imshow('drawContours',image)
+cv2.waitKey(0)
+
+
 
 # 儲存圖像座標
 images_info = []
@@ -38,10 +69,10 @@ for contour in contours:
         images_info.append((x, y, w, h))
 
 # 排除離群值(忽略面積太小者)
-if images_info:
-    median_area = sorted([w * h for x, y, w, h in images_info])[len(images_info) // 2]
-    outlier_area = median_area / 2
-    images_info = [(x, y, w, h) for x, y, w, h in images_info if w * h >= outlier_area]
+# if images_info:
+#     median_area = sorted([w * h for x, y, w, h in images_info])[len(images_info) // 2]
+#     outlier_area = median_area / 2
+#     images_info = [(x, y, w, h) for x, y, w, h in images_info if w * h >= outlier_area]
 
 # 依圖像座標對圖像排序
 images_info.sort(key=lambda info: (info[1], info[0]))
