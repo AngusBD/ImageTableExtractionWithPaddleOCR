@@ -12,7 +12,7 @@ if not os.path.exists(slice_dir):
 # 加載影像
 input_dir = 'InputImages'
 # print("InputImages: ", os.path.join(input_dir,'testImg.jpg'))
-image = cv2.imread(os.path.join(input_dir,'img1.jpg'))
+image = cv2.imread(os.path.join(input_dir,'testImg.jpg'))
 
 # 轉換灰階
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -63,13 +63,12 @@ for contour in contours:
     perimeter = cv2.arcLength(contour, True)
     approx = cv2.approxPolyDP(contour, 0.02 * perimeter, True)
     # print(len(approx))
-    if len(approx) < 4:
+    # if len(approx) < 4:
         # 循环遍历每个顶点
+    if len(approx) == 4:  # 4個頂點為矩形
         for point in approx:
             x, y = point[0]  # 获取顶点坐标
-            print(x,y)
             cv2.circle(image_copy, (x, y), 5, (0, 0, 255), -1)  # 在图像上绘制顶点
-    if len(approx) == 4:  # 4個頂點為矩形
         # 獲取邊界與座標
         x, y, w, h = cv2.boundingRect(contour)
         # 計算面積
@@ -81,8 +80,9 @@ cv2.imshow('drawContours',image_copy)
 # 排除離群值(忽略面積太小者)
 if images_info:
     median_area = sorted([w * h for x, y, w, h in images_info])[len(images_info) // 2]
-    min_outlier_area = median_area / 2
-    max_outlier_area = median_area * 2
+    min_outlier_area = median_area / 4
+    max_outlier_area = median_area * 4
+    print(median_area, min_outlier_area, max_outlier_area)
     images_info = [(x, y, w, h) for x, y, w, h in images_info if w * h >= min_outlier_area and w * h <= max_outlier_area]
 
 # 依圖像座標對圖像排序
@@ -117,4 +117,4 @@ print(f'Image info saved to {info_file}')
 txts = recognize_text(slice_dir)
 
 data_to_excel(images_info, txts)
-cv2.waitKey(0)
+# cv2.waitKey(0)
