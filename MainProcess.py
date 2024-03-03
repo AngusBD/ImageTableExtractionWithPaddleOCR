@@ -22,7 +22,7 @@ _, thresh = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
 
 inverted_image = cv2.bitwise_not(thresh)
 
-iter = 3
+iter = 2
 hor = np.array([[1,1,1,1,1,1]])
 vertical_lines_eroded_image = cv2.erode(inverted_image, hor, iterations=iter)
 vertical_lines_eroded_image = cv2.dilate(vertical_lines_eroded_image, hor, iterations=iter)
@@ -47,10 +47,11 @@ cv2.imshow('combined_image',combined_image)
 
 # 找到輪廓
 contours, _ = cv2.findContours(combined_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
-cv2.drawContours(image, contours, -1, (0, 255, 0), 3)
+image_copy = image.copy()
+cv2.drawContours(image_copy, contours, -1, (0, 255, 0), 3)
 
-cv2.imshow('drawContours',image)
-cv2.waitKey(0)
+cv2.imshow('drawContours',image_copy)
+
 
 
 
@@ -61,6 +62,13 @@ images_info = []
 for contour in contours:
     perimeter = cv2.arcLength(contour, True)
     approx = cv2.approxPolyDP(contour, 0.02 * perimeter, True)
+    # print(len(approx))
+    if len(approx) < 4:
+        # 循环遍历每个顶点
+        for point in approx:
+            x, y = point[0]  # 获取顶点坐标
+            print(x,y)
+            cv2.circle(image_copy, (x, y), 5, (0, 0, 255), -1)  # 在图像上绘制顶点
     if len(approx) == 4:  # 4個頂點為矩形
         # 獲取邊界與座標
         x, y, w, h = cv2.boundingRect(contour)
@@ -68,11 +76,14 @@ for contour in contours:
         area = w * h
         images_info.append((x, y, w, h))
 
+cv2.imshow('drawContours',image_copy)
+
 # 排除離群值(忽略面積太小者)
-# if images_info:
-#     median_area = sorted([w * h for x, y, w, h in images_info])[len(images_info) // 2]
-#     outlier_area = median_area / 2
-#     images_info = [(x, y, w, h) for x, y, w, h in images_info if w * h >= outlier_area]
+if images_info:
+    median_area = sorted([w * h for x, y, w, h in images_info])[len(images_info) // 2]
+    min_outlier_area = median_area / 2
+    max_outlier_area = median_area * 2
+    images_info = [(x, y, w, h) for x, y, w, h in images_info if w * h >= min_outlier_area and w * h <= max_outlier_area]
 
 # 依圖像座標對圖像排序
 images_info.sort(key=lambda info: (info[1], info[0]))
@@ -103,6 +114,7 @@ with open(info_file, 'w') as f:
 print(f'Image info saved to {info_file}')
 
 
-# txts = recognize_text(slice_dir)
+txts = recognize_text(slice_dir)
 
-# data_to_excel(images_info, txts)
+data_to_excel(images_info, txts)
+cv2.waitKey(0)
