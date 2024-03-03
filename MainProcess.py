@@ -10,15 +10,16 @@ if not os.path.exists(slice_dir):
 
 # 加載影像
 input_dir = 'InputImages'
-print("InputImages: ", os.path.join(input_dir,'testImg.jpg'))
-image = cv2.imread(os.path.join(input_dir,'testImg.jpg'))
+# print("InputImages: ", os.path.join(input_dir,'testImg.jpg'))
+image = cv2.imread(os.path.join(input_dir,'img1.jpg'))
 
 # 轉換灰階
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
 # 閾值處理
 _, thresh = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
-
+cv2.imshow('tresh',thresh)
+cv2.waitKey(0)
 # 找到輪廓
 contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
@@ -71,9 +72,6 @@ with open(info_file, 'w') as f:
 print(f'Image info saved to {info_file}')
 
 
-txts = recognize_text(slice_dir)
-# txts = ['Description', 'Specification', 'Tolerance', 'L1', 'L2', 'L3', 'Min.Pitch', '8', '26', '-', 'FinishedBottom', '25', '26', '25', 'L1:+/-3', 'FinishedBottom', '8', '26', '一', 'MAX', 'Recessed', '8', None, None, None, 'Min.Trace', '26', 'FinishedTrace', '7', '+/-6', 'FinishedTrace', '26', '+/-6', 'Min.BumpPitch', '30']
+# txts = recognize_text(slice_dir)
 
-# print(images_info)
-# print(txts)
-data_to_excel(images_info, txts)
+# data_to_excel(images_info, txts)
