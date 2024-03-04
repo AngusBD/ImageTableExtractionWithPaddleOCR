@@ -1,5 +1,6 @@
 
 *.pyc
 *.xlsx
-*.jpg
 *.txt
+/ProcessImages
+/SlicedImages
