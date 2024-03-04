@@ -1,13 +1,18 @@
 import cv2
 import os
+import shutil
 import numpy as np
 from PaddleOCR import recognize_text
 from DataToExcel import data_to_excel
 
 # 檢查目錄
 slice_dir = 'SlicedImages'
-if not os.path.exists(slice_dir):
-    os.makedirs(slice_dir)
+# 如果資料夾存在，則遞迴地刪除它及其底下的所有文件
+if os.path.exists(slice_dir):
+    shutil.rmtree(slice_dir)
+
+# 創建資料夾
+os.makedirs(slice_dir)
 
 # 加載影像
 input_dir = 'InputImages'
@@ -99,6 +104,7 @@ for x, y, w, h in images_info:
     # 建立輸出路徑
     counter_str = str(counter).zfill(2)
     output_path = os.path.join(slice_dir, f'cropped_{counter_str}_x{x}_y{y}.jpg')
+    # output_path = os.path.join(slice_dir, f'cropped_{counter_str}.jpg')
     # 保存影像
     cv2.imwrite(output_path, cropped_image)
     counter += 1
@@ -114,7 +120,7 @@ with open(info_file, 'w') as f:
 print(f'Image info saved to {info_file}')
 
 
-txts = recognize_text(slice_dir)
+# txts = recognize_text(slice_dir)
 
-data_to_excel(images_info, txts)
+# data_to_excel(images_info, txts)
 # cv2.waitKey(0)
