@@ -8,11 +8,11 @@ def data_to_excel(images_info, txts):
     txts_filtered = ['None' if item is None else item for item in txts]
     grouped_txts_y = {}
     grouped_txts_x = {}
-    # 将 txts 中的字符串按照 images_info 中每个元组的第二个值进行分组
+    # 將 txts 中的字串依照 images_info 中每個元組的第二個值進行分組
 
     # 建立y軸字典
     for i, item in enumerate(images_info):
-        key = item[1]  # 使用每个元组的第二个值作为键
+        key = item[1]  # 使用每個元組的第二個值作為鍵
         if key in grouped_txts_y:
             grouped_txts_y[key].append(txts_filtered[i])
         else:
@@ -21,7 +21,7 @@ def data_to_excel(images_info, txts):
 
     # 建立x軸字典
     for i, item in enumerate(images_info):
-        key = item[0]  # 使用每个元组的第二个值作为键
+        key = item[0]  # 使用每個元組的第二個值作為鍵
         if key in grouped_txts_x:
             grouped_txts_x[key].append(txts_filtered[i])
         else:
@@ -40,18 +40,18 @@ def data_to_excel(images_info, txts):
     # print(sorted_grouped_txts_x,x_max_value_count)
     # print(sorted_grouped_txts_y,y_max_value_count)
 
-    # 將每個字的x,y與字進行合併
+    # 將每個字的x,y與字合併
     combined_data = [(item[0], item[1], txt) for item, txt in zip(images_info, txts_filtered)]
 
     # print(combined_data)
 
 
-    # 建立坐標系
+    # 建立座標系
     x_values = list(sorted_grouped_txts_x.keys())
     y_values = list(sorted_grouped_txts_y.keys())
     coordinates = [['N/A'] * len(x_values) for _ in range(len(y_values))]
 
-    # 填充坐標
+    # 填充座標系
     for x, y, data in combined_data:
         x_index = x_values.index(x)
         y_index = y_values.index(y)
