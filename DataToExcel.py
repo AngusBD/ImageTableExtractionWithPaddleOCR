@@ -1,7 +1,7 @@
 from openpyxl import Workbook
 
-# images_info = [(9, 13, 393, 67), (404, 13, 437, 31), (843, 13, 133, 67), (404, 46, 149, 34), (555, 46, 163, 34), (720, 46, 122, 34), (9, 81, 393, 45), (404, 81, 149, 45), (555, 81, 163, 45), (720, 81, 121, 45), (9, 128, 393, 45), (404, 128, 149, 45), (555, 128, 163, 45), (720, 128, 121, 45), (843, 128, 133, 45), (9, 175, 393, 44), (404, 175, 149, 44), (555, 175, 163, 44), (720, 175, 121, 44), (843, 175, 133, 44), (9, 221, 393, 43), (404, 221, 149, 43), (555, 221, 163, 43), (720, 221, 121, 43), (843, 221, 133, 43), (9, 266, 393, 40), (404, 266, 437, 40), (9, 307, 393, 40), (404, 307, 437, 40), (843, 307, 133, 40), (9, 349, 393, 38), (404, 349, 437, 38), (843, 349, 133, 38), (9, 388, 393, 40), (404, 388, 437, 40)]
-# txts = ['Description', 'Specification', 'Tolerance', 'L1', 'L2', 'L3', 'Min.Pitch', '8', '26', '-', 'FinishedBottom', '25', '26', '25', 'L1:+/-3', 'FinishedBottom', '8', '26', '一', 'MAX', 'Recessed', '8', None, None, None, 'Min.Trace', '26', 'FinishedTrace', '7', '+/-6', 'FinishedTrace', '26', '+/-6', 'Min.BumpPitch', '30']
+images_info = [(8, 12, 395, 69), (403, 12, 439, 33), (842, 12, 135, 69), (403, 45, 151, 36), (554, 45, 165, 36), (719, 45, 124, 36), (8, 80, 395, 47), (403, 80, 151, 47), (554, 80, 165, 47), (719, 80, 123, 47), (842, 80, 135, 47), (8, 127, 395, 47), (403, 127, 151, 47), (554, 127, 165, 47), (719, 127, 123, 47), (842, 127, 135, 47), (8, 174, 395, 46), (403, 174, 151, 46), (554, 174, 165, 46), (719, 174, 123, 46), (842, 174, 135, 46), (8, 220, 395, 45), (403, 220, 151, 45), (554, 220, 165, 45), (719, 220, 123, 45), (842, 220, 135, 45), (8, 265, 395, 42), (403, 265, 439, 42), (842, 265, 135, 42), (8, 306, 395, 42), (403, 306, 439, 42), (842, 306, 135, 42), (8, 348, 395, 40), (403, 348, 439, 40), (842, 348, 135, 40), (8, 387, 395, 42), (403, 387, 439, 42), (842, 387, 135, 42)]
+txts = ['Description', 'Specification', 'Tolerance', 'L1', 'L2', 'L3', 'Min.Pitch', '8', '26', None, None, 'FinishedBottom', '25', '26', '25', 'L1:+/-3', 'FinishedBottom', '8', '26', '一', 'MAX', 'Recessed', '8', None, None, None, 'Min.Trace', '26', None, 'FinishedTrace', '7', '+/-6', 'FinishedTrace', '26', '+/-6', 'Min.BumpPitch', '30', None]
 
 def data_to_excel(images_info, txts):
 
@@ -29,41 +29,85 @@ def data_to_excel(images_info, txts):
     sorted_grouped_txts_x = dict(sorted(grouped_txts_x.items()))
 
     # 找出x軸個數(建立座標系)
-    x_max_key = max(sorted_grouped_txts_x, key=lambda x: len(sorted_grouped_txts_x[x]))
-    x_max_value_count = len(sorted_grouped_txts_x[x_max_key])
+    # x_max_key = max(sorted_grouped_txts_x, key=lambda x: len(sorted_grouped_txts_x[x]))
+    # x_max_value_count = len(sorted_grouped_txts_x[x_max_key])
 
     # 找出y軸個數(建立座標系)
-    y_max_key = max(sorted_grouped_txts_y, key=lambda y: len(sorted_grouped_txts_y[y]))
-    y_max_value_count = len(sorted_grouped_txts_y[y_max_key])
+    # y_max_key = max(sorted_grouped_txts_y, key=lambda y: len(sorted_grouped_txts_y[y]))
+    # y_max_value_count = len(sorted_grouped_txts_y[y_max_key])
 
 
     # print(sorted_grouped_txts_x,x_max_value_count)
     # print(sorted_grouped_txts_y,y_max_value_count)
 
     # 將每個字的x,y與字合併
-    combined_data = [(item[0], item[1], txt) for item, txt in zip(images_info, txts_filtered)]
+    # combined_data = [(item[0], item[1], txt) for item, txt in zip(images_info, txts_filtered)]
 
-    # print(combined_data)
+    # 將每個字的x,y,w,h與字合併
+    combined_data = [(item[0], item[1], item[2], item[3], txt) for item, txt in zip(images_info, txts_filtered)]
+    # print('combined_data', combined_data)
 
 
     # 建立座標系
     x_values = list(sorted_grouped_txts_x.keys())
     y_values = list(sorted_grouped_txts_y.keys())
-    coordinates = [['N/A'] * len(x_values) for _ in range(len(y_values))]
+    coordinates_text = [['N/A'] * len(x_values) for _ in range(len(y_values))]
 
+    pic_coordinates = [[None] * len(x_values) for _ in range(len(y_values))]
+    
     # 填充座標系
-    for x, y, data in combined_data:
+    # for x, y, w, h, data in combined_data:
+    #     x_index = x_values.index(x)
+    #     y_index = y_values.index(y)
+    #     coordinates[y_index][x_index] = data
+    
+    
+    for index, data in enumerate(combined_data):
+        
+        x, y, w, h, text = data  # 直接解包元组
+        
         x_index = x_values.index(x)
         y_index = y_values.index(y)
-        coordinates[y_index][x_index] = data
-
+        coordinates_text[y_index][x_index] = text
+        pic_coordinates[y_index][x_index] = (x,y,w,h)
+            
     wb = Workbook()
     ws = wb.active
-    for row in coordinates:
+    for row in coordinates_text:
         ws.append(row)
 
+    for row in pic_coordinates:
+        print(row)
+
+    for index, sublist in enumerate(pic_coordinates):
+        first,second,distance = calculate_horizontal_gap_distance(sublist)
+        if distance > 0:
+            ws.merge_cells(start_row=index+1, start_column=first+1, end_row=index+1, end_column=second)
+    
     # 保存工作簿
     wb.save('SavedText.xlsx')
 
-    for row in coordinates:
-        print(row)
+def calculate_horizontal_gap_distance(sublist):
+    first_non_none_index = None
+    second_non_none_index = None
+    distance = 0
+    
+    # 找到第一個非None值索引
+    for i, item in enumerate(sublist[:-1]):
+        if item is not None and sublist[i+1] is None:
+            first_non_none_index = i
+            break
+
+    # 找到第二個非None值索引
+    if first_non_none_index is not None:
+        for i, item in enumerate(sublist[first_non_none_index+1:], start=first_non_none_index+1):
+            if item is not None:
+                second_non_none_index = i
+                break
+
+    # 計算距離
+    if first_non_none_index is not None and second_non_none_index is not None:
+        distance = second_non_none_index - first_non_none_index
+    return first_non_none_index, second_non_none_index, distance
+
+data_to_excel(images_info, txts)
