@@ -76,13 +76,35 @@ def data_to_excel(images_info, txts):
     for row in coordinates_text:
         ws.append(row)
 
-    for row in pic_coordinates:
-        print(row)
+    # for row in pic_coordinates:
+    #     print(row)
 
+    #橫向合併
     for index, sublist in enumerate(pic_coordinates):
-        first,second,distance = calculate_horizontal_gap_distance(sublist)
-        if distance > 0:
-            ws.merge_cells(start_row=index+1, start_column=first+1, end_row=index+1, end_column=second)
+        first, second, distance = calculate_horizontal_gap_distance(sublist)
+        if first is not None and second is not None:  # Check if first and second are not None
+            if sublist[first] is not None and sublist[second] is not None:
+                first_x, first_y, first_w, first_h = sublist[first]
+                second_x, second_y, second_w, second_h = sublist[second]
+                if distance > 0 and first_x + first_w >= second_x - 5 and first_x + first_w <= second_x + 5:
+                    ws.merge_cells(start_row=index+1, start_column=first+1, end_row=index+1, end_column=second)
+                    sublist[first+1:second] = [(-1, -1, -1, -1)] * (second - (first + 1))
+    
+    #縱向合併
+    transported_pic_coordinates = [list(i) for i in zip(*pic_coordinates)] #轉置
+    for index, sublist in enumerate(transported_pic_coordinates):
+        first, second, distance = calculate_vertical_gap_distance(sublist)
+        if first is not None and second is not None:  # Check if first and second are not None
+            if sublist[first] is not None and sublist[second] is not None:
+                first_x, first_y, first_w, first_h = sublist[first]
+                second_x, second_y, second_w, second_h = sublist[second]
+                if distance > 0 and first_y + first_h >= second_y - 5 and first_y + first_h <= second_y + 5:
+                    ws.merge_cells(start_row=first+1, start_column=index+1, end_row=second, end_column=index+1)
+                    sublist[first+1:second] = [(-1, -1, -1, -1)] * (second - (first + 1))
+    
+                    
+    for row in transported_pic_coordinates:
+        print(row)
     
     # 保存工作簿
     wb.save('SavedText.xlsx')
@@ -106,6 +128,29 @@ def calculate_horizontal_gap_distance(sublist):
                 break
 
     # 計算距離
+    if first_non_none_index is not None and second_non_none_index is not None:
+        distance = second_non_none_index - first_non_none_index
+    return first_non_none_index, second_non_none_index, distance
+
+def calculate_vertical_gap_distance(sublist):
+    first_non_none_index = None
+    second_non_none_index = None
+    distance = 0
+    
+    # 找到第一个非 None 值的索引
+    for i, item in enumerate(sublist[:-1]):
+        if item is not None and sublist[i+1] is None:
+            first_non_none_index = i
+            break
+
+    # 找到第二个非 None 值的索引
+    if first_non_none_index is not None:
+        for i, item in enumerate(sublist[first_non_none_index+1:], start=first_non_none_index+1):
+            if item is not None:
+                second_non_none_index = i
+                break
+
+    # 计算两个非 None 值索引之间的距离
     if first_non_none_index is not None and second_non_none_index is not None:
         distance = second_non_none_index - first_non_none_index
     return first_non_none_index, second_non_none_index, distance
