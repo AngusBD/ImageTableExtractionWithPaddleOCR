@@ -16,7 +16,7 @@ os.makedirs(slice_dir)
 
 # 加載影像
 input_dir = 'InputImages'
-image = cv2.imread(os.path.join(input_dir,'img1.jpg'))
+image = cv2.imread(os.path.join(input_dir,'testImg.jpg'))
 
 # 將圖像放大1.5倍
 # image = cv2.resize(image, None, fx=1.5, fy=1.5, interpolation=cv2.INTER_CUBIC)
@@ -96,7 +96,7 @@ for contour in contours:
         area = w * h
         images_info.append((x, y, w, h))
 
-cv2.imshow('drawContours',image_copy)
+# cv2.imshow('drawContours',image_copy)
 
 # 排除離群值(忽略面積太小者)
 if images_info:
@@ -122,7 +122,7 @@ for x, y, w, h in images_info:
     
     # 建立輸出路徑
     counter_str = str(counter).zfill(2)
-    output_path = os.path.join(slice_dir, f'cropped_{counter_str}_x{x}_y{y}.jpg')
+    output_path = os.path.join(slice_dir, f'cropped_{counter_str}_x{x}_y{y}_w{w}_h{h}.jpg')
     # output_path = os.path.join(slice_dir, f'cropped_{counter_str}.jpg')
     
     # 保存影像
@@ -142,5 +142,6 @@ print(f'Image info saved to {info_file}')
 
 txts = recognize_text(slice_dir)
 
+
 data_to_excel(images_info, txts)
-cv2.waitKey(0)
+# cv2.waitKey(0)

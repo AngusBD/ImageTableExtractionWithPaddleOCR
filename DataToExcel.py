@@ -1,7 +1,7 @@
 from openpyxl import Workbook
 
-images_info = [(8, 12, 395, 69), (403, 12, 439, 33), (842, 12, 135, 69), (403, 45, 151, 36), (554, 45, 165, 36), (719, 45, 124, 36), (8, 80, 395, 47), (403, 80, 151, 47), (554, 80, 165, 47), (719, 80, 123, 47), (842, 80, 135, 47), (8, 127, 395, 47), (403, 127, 151, 47), (554, 127, 165, 47), (719, 127, 123, 47), (842, 127, 135, 47), (8, 174, 395, 46), (403, 174, 151, 46), (554, 174, 165, 46), (719, 174, 123, 46), (842, 174, 135, 46), (8, 220, 395, 45), (403, 220, 151, 45), (554, 220, 165, 45), (719, 220, 123, 45), (842, 220, 135, 45), (8, 265, 395, 42), (403, 265, 439, 42), (842, 265, 135, 42), (8, 306, 395, 42), (403, 306, 439, 42), (842, 306, 135, 42), (8, 348, 395, 40), (403, 348, 439, 40), (842, 348, 135, 40), (8, 387, 395, 42), (403, 387, 439, 42), (842, 387, 135, 42)]
-txts = ['Description', 'Specification', 'Tolerance', 'L1', 'L2', 'L3', 'Min.Pitch', '8', '26', None, None, 'FinishedBottom', '25', '26', '25', 'L1:+/-3', 'FinishedBottom', '8', '26', '一', 'MAX', 'Recessed', '8', None, None, None, 'Min.Trace', '26', None, 'FinishedTrace', '7', '+/-6', 'FinishedTrace', '26', '+/-6', 'Min.BumpPitch', '30', None]
+# images_info = [(8, 12, 395, 69), (403, 12, 439, 33), (842, 12, 135, 69), (403, 45, 151, 36), (554, 45, 165, 36), (719, 45, 124, 36), (8, 80, 395, 47), (403, 80, 151, 47), (554, 80, 165, 47), (719, 80, 123, 47), (842, 80, 135, 47), (8, 127, 395, 47), (403, 127, 151, 47), (554, 127, 165, 47), (719, 127, 123, 47), (842, 127, 135, 47), (8, 174, 395, 46), (403, 174, 151, 46), (554, 174, 165, 46), (719, 174, 123, 46), (842, 174, 135, 46), (8, 220, 395, 45), (403, 220, 151, 45), (554, 220, 165, 45), (719, 220, 123, 45), (842, 220, 135, 45), (8, 265, 395, 42), (403, 265, 439, 42), (842, 265, 135, 42), (8, 306, 395, 42), (403, 306, 439, 42), (842, 306, 135, 42), (8, 348, 395, 40), (403, 348, 439, 40), (842, 348, 135, 40), (8, 387, 395, 42), (403, 387, 439, 42), (842, 387, 135, 42)]
+# txts = ['Description', 'Specification', 'Tolerance', 'L1', 'L2', 'L3', 'Min.Pitch', '8', '26', None, None, 'FinishedBottom', '25', '26', '25', 'L1:+/-3', 'FinishedBottom', '8', '26', '一', 'MAX', 'Recessed', '8', None, None, None, 'Min.Trace', '26', None, 'FinishedTrace', '7', '+/-6', 'FinishedTrace', '26', '+/-6', 'Min.BumpPitch', '30', None]
 
 def data_to_excel(images_info, txts):
 
@@ -137,22 +137,22 @@ def calculate_vertical_gap_distance(sublist):
     second_non_none_index = None
     distance = 0
     
-    # 找到第一个非 None 值的索引
+    # 找到第一個非None值索引
     for i, item in enumerate(sublist[:-1]):
         if item is not None and sublist[i+1] is None:
             first_non_none_index = i
             break
 
-    # 找到第二个非 None 值的索引
+    # 找到第二個非None值索引
     if first_non_none_index is not None:
         for i, item in enumerate(sublist[first_non_none_index+1:], start=first_non_none_index+1):
             if item is not None:
                 second_non_none_index = i
                 break
 
-    # 计算两个非 None 值索引之间的距离
+    # 計算距離
     if first_non_none_index is not None and second_non_none_index is not None:
         distance = second_non_none_index - first_non_none_index
     return first_non_none_index, second_non_none_index, distance
 
-data_to_excel(images_info, txts)
+# data_to_excel(images_info, txts)
