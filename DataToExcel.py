@@ -1,10 +1,18 @@
 from openpyxl import Workbook
-
+import os
+import shutil
 # images_info = [(8, 12, 395, 69), (403, 12, 439, 33), (842, 12, 135, 69), (403, 45, 151, 36), (554, 45, 165, 36), (719, 45, 124, 36), (8, 80, 395, 47), (403, 80, 151, 47), (554, 80, 165, 47), (719, 80, 123, 47), (842, 80, 135, 47), (8, 127, 395, 47), (403, 127, 151, 47), (554, 127, 165, 47), (719, 127, 123, 47), (842, 127, 135, 47), (8, 174, 395, 46), (403, 174, 151, 46), (554, 174, 165, 46), (719, 174, 123, 46), (842, 174, 135, 46), (8, 220, 395, 45), (403, 220, 151, 45), (554, 220, 165, 45), (719, 220, 123, 45), (842, 220, 135, 45), (8, 265, 395, 42), (403, 265, 439, 42), (842, 265, 135, 42), (8, 306, 395, 42), (403, 306, 439, 42), (842, 306, 135, 42), (8, 348, 395, 40), (403, 348, 439, 40), (842, 348, 135, 40), (8, 387, 395, 42), (403, 387, 439, 42), (842, 387, 135, 42)]
 # txts = ['Description', 'Specification', 'Tolerance', 'L1', 'L2', 'L3', 'Min.Pitch', '8', '26', None, None, 'FinishedBottom', '25', '26', '25', 'L1:+/-3', 'FinishedBottom', '8', '26', '一', 'MAX', 'Recessed', '8', None, None, None, 'Min.Trace', '26', None, 'FinishedTrace', '7', '+/-6', 'FinishedTrace', '26', '+/-6', 'Min.BumpPitch', '30', None]
 
 def data_to_excel(dir,images_info, txts):
-
+    # 檢查目錄
+    excel_dir = 'SavedExcel'
+    
+    # 如果資料夾存在，則遞迴地刪除它及其底下的所有文件
+    if not os.path.exists(excel_dir):
+        # 創建資料夾
+        os.makedirs(excel_dir)
+    
     txts_filtered = ['None' if item is None else item for item in txts]
     grouped_txts_y = {}
     grouped_txts_x = {}
@@ -105,11 +113,14 @@ def data_to_excel(dir,images_info, txts):
                     
     # for row in transported_pic_coordinates:
     #     print(row)
-    
-    save_dir = f'{dir}_SavedText.xlsx'
+    file_name = dir.split('\\')
+    save_dir = os.path.join(excel_dir,file_name[-1])
+    save_dir = f'{save_dir}_SavedText.xlsx'
     print(save_dir)
     # 保存工作簿
     wb.save(save_dir)
+
+
 
 def calculate_horizontal_gap_distance(sublist):
     first_non_none_index = None
@@ -133,6 +144,8 @@ def calculate_horizontal_gap_distance(sublist):
     if first_non_none_index is not None and second_non_none_index is not None:
         distance = second_non_none_index - first_non_none_index
     return first_non_none_index, second_non_none_index, distance
+
+
 
 def calculate_vertical_gap_distance(sublist):
     first_non_none_index = None
